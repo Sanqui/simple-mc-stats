@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>${server_name} stats</title>
     <style>
-        .column {display: inline-block; width: 33%;}
+        .column {display: inline-block; width: 33%; vertical-align: top;}
     </style>
 </head>
 <body>
@@ -19,6 +19,17 @@
             </ol>
         </div>
     % endfor
+    % for title, stat in (('Longest distance walken', 'walkOneCm'), ('Most jumps', 'jump'), ('Most deaths', 'deaths')):
+        <div class="column">
+            <h2>${title}</h2>
+            <ol>
+            % for player, num in players_per_stat['stat.'+stat].most_common(50):
+                <li>${player} - ${num}
+            % endfor
+            </ol>
+        </div>
+    % endfor
+    <hr>
     % for title, stat in (('broken blocks', 'mineBlock'), ('used items', 'useItem'), ('crafted items', 'craftItem')):
         <div class="column">
             <h2>Most ${title}</h2>
