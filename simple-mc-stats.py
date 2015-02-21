@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 import os.path
 import json
@@ -8,6 +9,7 @@ from mako.template import Template
 
 STATS_DIR = "stats/"
 OUTPUT_PATH = "out/"
+SERVER_NAME = "Minecraft server"
 
 if os.path.isfile("name_cache.json"):
     name_cache = json.load(open("name_cache.json"))
@@ -39,7 +41,8 @@ json.dump(name_cache, open('name_cache.json', 'w'))
 
 output = Template(filename="templates/index.html").render(
     stats_per_player=stats_per_player,
-    players_per_stat=players_per_stat)
+    players_per_stat=players_per_stat,
+    server_name=SERVER_NAME)
 open(OUTPUT_PATH+'index.html', 'w').write(output)
 
 #print(players_per_stat['stat.mineBlock'].most_common(50))
