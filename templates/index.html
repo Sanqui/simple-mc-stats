@@ -9,29 +9,25 @@
 </head>
 <body>
     <h1>${server_name} stats</h1>
-    <div class="column">
-        <h2>Most blocks broken</h2>
-        <ol>
-        % for player, num in players_per_stat['stat.mineBlock'].most_common(50):
-            <li>${player} - ${num}
-        % endfor
-        </ol>
-    </div>
-    <div class="column">
-        <h2>Most items used</h2>
-        <ol>
-        % for player, num in players_per_stat['stat.useItem'].most_common(50):
-            <li>${player} - ${num}
-        % endfor
-        </ol>
-    </div>
-    <div class="column">
-        <h2>Most items crafted</h2>
-        <ol>
-        % for player, num in players_per_stat['stat.craftItem'].most_common(50):
-            <li>${player} - ${num}
-        % endfor
-        </ol>
-    </div>
+    % for title, stat in (('blocks broken', 'mineBlock'), ('items used', 'useItem'), ('items crafted', 'craftItem')):
+        <div class="column">
+            <h2>Most ${title}</h2>
+            <ol>
+            % for player, num in players_per_stat['stat.'+stat].most_common(50):
+                <li>${player} - ${num}
+            % endfor
+            </ol>
+        </div>
+    % endfor
+    % for title, stat in (('broken blocks', 'mineBlock'), ('used items', 'useItem'), ('crafted items', 'craftItem')):
+        <div class="column">
+            <h2>Most ${title}</h2>
+            <ol>
+            % for item, num in global_stats['stat.'+stat].most_common(50):
+                <li>${item} - ${num}
+            % endfor
+            </ol>
+        </div>
+    % endfor
 </body>
 </html>

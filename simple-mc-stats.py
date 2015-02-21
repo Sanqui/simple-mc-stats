@@ -11,6 +11,8 @@ STATS_DIR = "stats/"
 OUTPUT_PATH = "out/"
 SERVER_NAME = "Minecraft server"
 
+ITEM_STAT_NAMES = 'stat.mineBlock stat.useItem stat.craftItem'.split()
+
 if os.path.isfile("name_cache.json"):
     name_cache = json.load(open("name_cache.json"))
 else:
@@ -18,7 +20,10 @@ else:
 
 stats_per_player = {}
 players_per_stat = defaultdict(Counter)
+
 global_stats = Counter()
+for stat in ITEM_STAT_NAMES:
+    global_stats[stat] = Counter()
 
 for filename in os.listdir(STATS_DIR):
     j = json.load(open(STATS_DIR+filename))
@@ -27,14 +32,16 @@ for filename in os.listdir(STATS_DIR):
         name_cache[uuid] = requests.get('https://api.mojang.com/user/profiles/'+uuid+'/names').json()[0]['name']
     name = name_cache[uuid]
     stats_per_player[name] = Counter(j)
+    for stat in ITEM_STAT_NAMES:
+        stats_per_player[name][stat] = Counter()
+    
     for field, value in j.items():
         players_per_stat[field][name] = value
-        if field.startswith('stat.mineBlock.'):
-            players_per_stat['stat.mineBlock'][name] += value
-        if field.startswith('stat.useItem.'):
-            players_per_stat['stat.useItem'][name] += value
-        if field.startswith('stat.craftItem.'):
-            players_per_stat['stat.craftItem'][name] += value
+        for stat in ITEM_STAT_NAMES:
+            if field.startswith(stat):
+                players_per_stat[stat][name] += value
+                stats_per_player[name][stat][field.split('.')[-1]] = value
+                global_stats[stat][field.split('.')[-1]] += value
     #global_stats.update(j) # TODO remove achievement progress
 
 json.dump(name_cache, open('name_cache.json', 'w'))
@@ -42,6 +49,7 @@ json.dump(name_cache, open('name_cache.json', 'w'))
 output = Template(filename="templates/index.html").render(
     stats_per_player=stats_per_player,
     players_per_stat=players_per_stat,
+    global_stats=global_stats,
     server_name=SERVER_NAME)
 open(OUTPUT_PATH+'index.html', 'w').write(output)
 
