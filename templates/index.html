@@ -9,32 +9,35 @@
 </head>
 <body>
     <h1>${server_name} stats</h1>
-    % for title, stat in (('blocks broken', 'mineBlock'), ('items used', 'useItem'), ('items crafted', 'craftItem')):
+    % for title, stat in (('blocks broken', 'mined'), ('items used', 'used'), ('items crafted', 'crafted')):
         <div class="column">
             <h2>Most ${title}</h2>
             <ol>
-            % for player, num in players_per_stat['stat.'+stat].most_common(50):
+            % for player, num in players_per_stat[stat].most_common(50):
                 <li>${player} - ${num}
             % endfor
             </ol>
         </div>
     % endfor
-    % for title, stat in (('Longest distance walken', 'walkOneCm'), ('Most jumps', 'jump'), ('Most deaths', 'deaths')):
-        <div class="column">
-            <h2>${title}</h2>
-            <ol>
-            % for player, num in players_per_stat['stat.'+stat].most_common(50):
-                <li>${player} - ${num}
-            % endfor
-            </ol>
-        </div>
+    % for stats in [[('Longest distance walken', 'walk_one_cm'), ('Most jumps', 'jump'), ('Most deaths', 'deaths')],\
+                    [('Minutes played', 'play_one_minute'), ('Damage dealth', 'damage_dealt'), ('Damage taken', 'damage_taken')]]:
+        % for title, stat in stats:
+            <div class="column">
+                <h2>${title}</h2>
+                <ol>
+                % for player, num in players_per_stat[stat].most_common(50):
+                    <li>${player} - ${num}
+                % endfor
+                </ol>
+            </div>
+        % endfor
     % endfor
     <hr>
-    % for title, stat in (('broken blocks', 'mineBlock'), ('used items', 'useItem'), ('crafted items', 'craftItem')):
+    % for title, stat in (('broken blocks', 'mined'), ('used items', 'used'), ('crafted items', 'crafted')):
         <div class="column">
             <h2>Most ${title}</h2>
             <ol>
-            % for item, num in global_stats['stat.'+stat].most_common(50):
+            % for item, num in global_stats[stat].most_common(50):
                 <li>${item} - ${num}
             % endfor
             </ol>
